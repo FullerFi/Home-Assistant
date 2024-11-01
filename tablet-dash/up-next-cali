@@ -1,0 +1,36 @@
+type: custom:week-planner-card
+title: Up Next
+timeFormat: t
+calendars:
+  - entity: calendar.fullerproductions_gmail_com
+    color: "#e6c229"
+    name: Family
+  - entity: calendar.holidays_in_united_states
+    color: "#1a8fe3"
+    name: Holidays
+days: 4
+locationLink: >-
+  https://www.openstreetmap.org/search?query=3319%20e%2027th%20ave%2C%20denver#map=19/39.755929/-104.948377
+locale: en
+showLocation: false
+updateInterval: 60
+card_mod:
+  style: |
+    .event {
+      color: #31a1af !important; /* Change the event title color */
+      font-weight: bold !important; /* Makes the event title bold */
+    }
+    .event.past {
+      opacity: 0.3;
+    }
+    .day-wrapper {
+      display: flex;
+      flex-wrap: wrap;
+      flex-direction: row;
+      justify-content: space-around;
+    }
+    .day {
+      flex-basis: 30%;
+      max-width: 20%;
+      min-width: 20%;
+    }
