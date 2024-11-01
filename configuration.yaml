@@ -1,0 +1,143 @@
+# Loads default set of integrations. Do not remove.
+default_config:
+
+frontend:
+  themes: !include_dir_merge_named themes
+
+# Text to speech
+tts:
+  - platform: google_translate
+
+automation: !include automations.yaml
+script: !include scripts.yaml
+scene: !include scenes.yaml
+
+# Look in other files for more things!
+sensor: !include sensor.yaml
+binary_sensor: !include binary_sensor.yaml
+device_tracker: !include device_tracker.yaml
+
+homeassistant:
+  name: Luv Shack
+  latitude: 39.755950
+  longitude: -104.948360
+  elevation: 5330
+  unit_system: imperial
+  currency: USD
+  time_zone: "America/Denver"
+  country: US
+  
+  external_url: "https://wp45m607mlz1oc2ubi9rewfoup8afprx.ui.nabu.casa/"
+  internal_url: "http://192.168.10.100:8123"
+  #  allowlist_external_dirs:
+  #  allowlist_external_urls:
+  #    - "http://the-jeffrey.duckdns.org"
+  media_dirs:
+    media: "/media"
+  legacy_templates: false
+
+    # add counters
+counter:
+  water_filter_counter:
+    name: "Water Filter Counter"
+    initial: 0
+    step: 1
+
+  furnace_filter_counter:
+    name: "Furnace Filter Counter"
+    initial: 0
+    step: 1
+
+  litter_box_litter_counter:
+    name: "Litter Box Litter Counter"
+    initial: 0
+    step: 1
+
+  litter_box_pee_pad_counter:
+    name: "Litter Box Pee Pad Counter"
+    initial: 0
+    step: 1
+
+template:
+  - sensor:
+    - name: "Lights On Entity List"
+      unique_id: lights_on_entity_list
+      state: >
+        {{ states.light | selectattr('state', 'eq', 'on') | map(attribute='entity_id') | join(',') }}
+  - sensor:
+    - name: "Lights On Counter"
+      unique_id: lights_on_counter
+      state: >
+        {{ states.light | selectattr('state', 'eq', 'on') | list | length }}
+
+input_number:
+  water_filter_custom_value:
+    name: Set Water Filter Days
+    initial: 0
+    min: 0
+    max: 255
+    step: 1
+
+  furnace_filter_days:
+    name: Furnace Filter Days
+    initial: 0
+    min: 0
+    max: 365
+    step: 1
+
+  litter_box_litter_days:
+    name: Litter Box Litter Days
+    initial: 0
+    min: 0
+    max: 365
+    step: 1
+
+  litter_box_pee_pad_days:
+    name: Pee Pad Days
+    initial: 0
+    min: 0
+    max: 365
+    step: 1
+
+input_text:
+  water_filter_custom_number:
+    name: Water Filter Custom Number
+    pattern: '[0-9]*'
+
+browser_mod:
+
+logger:
+  default: info
+  logs:
+    homeassistant.components.template: debug
+    
+  #auth_providers:
+#   - type: legacy_api_password
+#     api_password: !secret http_password
+#   - type: trusted_networks
+#     trusted_networks:
+#     - 192.168.0.0/24
+#     - fd00::/8
+#http:
+#  base_url: "https://the-jeffrey.duckdns.org"
+#  server_port: 8123
+#  ssl_certificate: "/ssl/fullchain.pem"
+#  ssl_key: "/ssl/privkey.pem"
+
+# Customization file
+#  customize: !include customize.yaml
+#  whitelist_external_dirs:
+#   -/temp
+#  external_url: https://wp45m607mlz1oc2ubi9rewfoup8afprx.ui.nabu.casa/
+#  internal_url: http://192.168.10.100:8123
+
+#http:
+#  ssl_certificate: "/ssl/fullchain.pem"
+#  ssl_key: "/ssl/privkey.pem"
+#  ip_ban_enabled: true
+#  log_attempts_threshold: 5
+
+#  platform: ping
+#  name: internet_reachable
+#  host: 1.1.1.1
+#  scan_interval: 15
