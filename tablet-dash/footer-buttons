@@ -1,0 +1,56 @@
+type: horizontal-stack
+cards:
+  - type: custom:button-card
+    layout: icon_name
+    icon: mdi:calendar
+    size: 20pt
+    name: Calendar
+    styles:
+      card:
+        - border-radius: 10px
+      name:
+        - margin-left: "-20%"
+    tap_action:
+      action: navigate
+      navigation_path: /calendar
+  - type: custom:button-card
+    layout: icon_name
+    icon: mdi:warehouse
+    size: 20pt
+    name: House
+    styles:
+      card:
+        - border-radius: 10px
+      name:
+        - margin-left: "-26%"
+    tap_action:
+      action: navigate
+      navigation_path: /tablet-dash/house
+  - type: custom:button-card
+    layout: icon_name
+    icon: mdi:lightbulb
+    size: 20pt
+    name: Lights
+    styles:
+      card:
+        - border-radius: 10px
+      name:
+        - margin-left: "-26%"
+    tap_action:
+      action: navigate
+      navigation_path: /tablet-dash/lights
+  - type: custom:button-card
+    layout: icon_name
+    icon: mdi:server-network
+    size: 20pt
+    name: Network
+    styles:
+      card:
+        - border-radius: 10px
+      name:
+        - margin-left: "-26%"
+    tap_action:
+      action: navigate
+      navigation_path: /tablet-dash/network
+view_layout:
+  grid-area: footer
