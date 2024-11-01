@@ -1,0 +1,52 @@
+# Litter Box
+increment_litter_box_litter_counter:
+  alias: Increment Litter Box Litter Counter
+  sequence:
+    - service: counter.increment
+      target:
+        entity_id: counter.litter_box_litter_counter
+
+decrement_litter_box_litter_counter:
+  alias: Decrement Litter Box Litter Counter
+  sequence:
+    service: counter.decrement
+    target:
+      entity_id: counter.litter_box_litter_counter
+
+reset_litter_box_litter_counter:
+  alias: Reset Litter Box Litter Counter
+  sequence:
+    - service: counter.reset
+      target:
+        entity_id: counter.litter_box_litter_counter
+
+increment_litter_box_pee_pad_counter:
+  alias: Increment Litter Box Pee Pad Counter
+  sequence:
+    - service: counter.increment
+      target:
+        entity_id: counter.litter_box_pee_pad_counter
+
+decrement_litter_box_pee_pad_counter:
+  alias: Decrement Litter Box Pee Pad Counter
+  sequence:
+    - service: counter.decrement
+      target:
+        entity_id: counter.litter_box_pee_pad_counter
+
+reset_litter_box_pee_pad_counter:
+  alias: Reset Litter Box Pee Pad Counter
+  sequence:
+    - service: counter.reset
+      target:
+        entity_id: counter.litter_box_pee_pad_counter
+
+set_water_filter_days:
+  alias: Set Water Filter Days
+  sequence:
+    - service: counter.set
+      target:
+        entity_id: counter.water_filter_counter
+      data:
+        value: "{{ states('input_text.new_filter_days') }}"
+        
