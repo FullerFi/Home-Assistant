@@ -1,0 +1,256 @@
+type: custom:vertical-stack-in-card
+cards:
+  - type: markdown
+    content: " "
+  - type: markdown
+    content: >-
+      {{ now().hour|int % 12 if now().hour|int % 12 else 12 }}:{{
+      now().strftime("%M %p") }}
+    card_mod:
+      style: |
+        ha-card {
+          font-size: 50px;
+          font-weight: 250;
+        }
+  - type: markdown
+    content: "{{ now().strftime(\"%A, %B %d\") }}"
+    card_mod:
+      style: |
+        ha-card {
+          font-size: 15px;
+          font-weight: 300;
+        }
+  - type: custom:mushroom-template-card
+    entity: climate.luv_shack
+    icon: mdi:thermometer
+    icon_color: cyan
+    primary: "{{ states('sensor.ecobee_hub_dining_room_temperature_measurement') }}°F"
+    secondary: Dining Room Temp
+    tap_action:
+      action: more-info
+  - type: custom:mushroom-template-card
+    primary: Lighting
+    secondary: "{{ states('sensor.lights_on_counter') }} Lights On"
+    icon: mdi:lightbulb
+    icon_color: |-
+      {% if states('sensor.lights_on_counter') == '0' %}
+        disabled
+      {% else %}
+        amber
+      {% endif %}
+    tap_action:
+      action: call-service
+      service: browser_mod.popup
+      service_data:
+        title: Lights Currently On
+        content:
+          type: entities
+          entities: "{{ states('sensor.lights_on_entity_list').split(',') }}"
+  - type: custom:mushroom-template-card
+    primary: "{{ states(\"counter.water_filter_counter\") }} days"
+    secondary: since WATER FILTER was changed
+    icon: mdi:water
+    icon_color: blue
+    badge_icon: |-
+      {% if states('counter.water_filter_counter') | int >= 40 %}
+        mdi:alert
+      {% else %}
+        null
+      {% endif %}
+    badge_color: |-
+      {% if states('counter.water_filter_counter') | int >= 40 %}
+        red
+      {% else %}
+        null
+      {% endif %}
+    tap_action:
+      action: fire-dom-event
+      browser_mod:
+        service: browser_mod.popup
+        data:
+          title: Adjust Water Filter Days
+          content: |
+            <div>
+              <h3>Enter Custom Days:</h3>
+              <input type="number" id="custom_days" value="0" min="0" max="255">
+              <button id="set_days">Set Days</button>
+              <button id="reset_counter">Reset Counter</button>
+            </div>
+            <script>
+              document.getElementById('set_days').onclick = function() {
+                const days = document.getElementById('custom_days').value;
+                if (days !== '') {
+                  const daysValue = parseInt(days);
+                  if (!isNaN(daysValue)) {
+                    // Fire an event to set the input_number
+                    window.dispatchEvent(new Event('hass-api-call', {
+                      detail: {
+                        method: 'POST',
+                        url: '/api/services/input_number/set_value',
+                        data: {
+                          entity_id: 'input_number.water_filter_custom_value',
+                          value: daysValue
+                        }
+                      }
+                    }));
+                  }
+                }
+              };
+
+              document.getElementById('reset_counter').onclick = function() {
+                // Fire an event to reset the counter
+                window.dispatchEvent(new Event('hass-api-call', {
+                  detail: {
+                    method: 'POST',
+                    url: '/api/services/counter/reset',
+                    data: {
+                      entity_id: 'counter.water_filter_counter'
+                    }
+                  }
+                }));
+              };
+            </script>
+  - type: custom:mushroom-template-card
+    primary: "{{ states('counter.furnace_filter_counter') }} days"
+    secondary: since furnace filter was changed
+    icon: mdi:hvac
+    icon_color: white
+    badge_icon: |-
+      {% if states('counter.furnace_filter_counter') | int >= 85 %}
+        mdi:alert
+      {% else %}
+        null
+      {% endif %}
+    badge_color: |-
+      {% if states('counter.furnace_filter_counter') | int >= 85 %}
+        red
+      {% else %}
+        null
+      {% endif %}
+    tap_action:
+      action: call-service
+      service: browser_mod.popup
+      service_data:
+        title: Adjust Furnace Filter Days
+        content:
+          type: vertical-stack
+          cards:
+            - type: button
+              name: Increment Days
+              icon: mdi:plus-circle
+              tap_action:
+                action: call-service
+                service: script.turn_on
+                service_data:
+                  entity_id: script.increment_furnace_filter_counter
+            - type: button
+              name: Decrement Days
+              icon: mdi:minus-circle
+              tap_action:
+                action: call-service
+                service_data:
+                  entity_id: script.decrement_furnace_filter_counter
+        deviceID:
+          - this
+  - type: custom:mushroom-template-card
+    primary: "{{ states('counter.litter_box_litter_counter') }} days"
+    secondary: since LITTER was changed
+    icon: mdi:cat
+    icon_color: purple
+    badge_icon: |-
+      {% if states('counter.litter_box_litter_counter') | int >= 30 %}
+        mdi:alert
+      {% else %}
+        null
+      {% endif %}
+    badge_color: |-
+      {% if states('counter.litter_box_litter_counter') | int >= 30 %}
+        red
+      {% else %}
+        null
+      {% endif %}
+    tap_action:
+      action: perform-action
+      perform_action: browser_mod.popup
+      data:
+        title: Adjust Litter Days
+        content:
+          type: vertical-stack
+          cards:
+            - type: button
+              name: Increment Days
+              icon: mdi:plus-circle
+              tap_action:
+                action: call-service
+                service: script.turn_on
+                service_data:
+                  entity_id: script.increment_litter_box_litter_counter
+            - type: button
+              name: Decrement Days
+              icon: mdi:minus-circle
+              tap_action:
+                action: call-service
+                service: script.turn_on
+                service_data:
+                  entity_id: script.decrement_litter_box_litter_counter
+        deviceID:
+          - this
+      target: {}
+  - type: custom:mushroom-template-card
+    primary: "{{ states('counter.litter_box_pee_pad_counter') }} days"
+    secondary: since PEE PAD was changed
+    icon: mdi:cat
+    icon_color: purple
+    badge_icon: |-
+      {% if states('counter.litter_box_pee_pad_counter') | int >= 7 %}
+        mdi:alert
+      {% else %}
+        null
+      {% endif %}
+    badge_color: |-
+      {% if states('counter.litter_box_pee_pad_counter') | int >= 7 %}
+        red
+      {% else %}
+        null
+      {% endif %}
+    tap_action:
+      action: call-service
+      service: browser_mod.popup
+      service_data:
+        title: Adjust Pee Pad Days
+        content:
+          type: vertical-stack
+          cards:
+            - type: button
+              name: Increment Days
+              icon: mdi:plus-circle
+              tap_action:
+                action: call-service
+                service: script.turn_on
+                service_data:
+                  entity_id: script.increment_litter_box_pee_pad_counter
+            - type: button
+              name: Decrement Days
+              icon: mdi:minus-circle
+              tap_action:
+                action: call-service
+                service_data:
+                  entity_id: script.decrement_litter_box_pee_pad_counter
+        deviceID:
+          - this
+  - type: custom:mushroom-title-card
+    title: " "
+  - type: markdown
+    content: " "
+  - type: custom:button-card
+  - type: custom:simple-weather-card
+    entity: weather.openweathermap
+    name: " "
+    backdrop: true
+view_layout:
+  grid-area: sidebar
+card_mod:
+  style: |
+    ha-card {
+      border-radius: pt
+    }
