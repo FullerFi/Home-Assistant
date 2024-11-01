@@ -1,0 +1,45 @@
+- id: increment_filter_counters
+  alias: Increment Filter Counters
+  trigger:
+    - platform: time
+      at: '00:00:00'  # Every day at midnight
+  action:
+    - service: counter.increment
+      target:
+        entity_id: counter.water_filter_counter
+    - service: counter.increment
+      target:
+        entity_id: counter.furnace_filter_counter
+    - service: counter.increment
+      target:
+        entity_id: counter.litter_box_litter_counter
+    - service: counter.increment
+      target:
+        entity_id: counter.litter_box_pee_pad_counter
+
+# - id: reset_water_filter_days
+#   alias: Reset Water Filter Days
+#   trigger:
+#     - platform: state
+#       entity_id: input_boolean.water_filter_days
+#       to: "on"
+#   action:
+#     - service: input_number.set_value
+#       data:
+#         entity_id: input_number.water_filter_days
+#         value: 0
+#     - service: input_boolean.turn_off
+#       data:
+#         entity_id: input_boolean.water_filter_days
+        
+- id: update_water_filter_counter
+  alias: Update Water Filter Counter from Input
+  trigger:
+    - platform: state
+      entity_id: input_text.water_filter_custom_number
+  action:
+    - service: counter.set_value
+      target:
+        entity_id: counter.water_filter_counter
+      data:
+        value: "{{ states('input_text.water_filter_custom_number') | int }}"
