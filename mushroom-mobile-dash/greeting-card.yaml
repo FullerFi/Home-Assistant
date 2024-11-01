@@ -1,0 +1,15 @@
+type: custom:mushroom-template-card
+primary: |-
+  {% set time = now().hour %}
+  {% if (time >= 18) %}
+    Good Evening, {{user}}!
+  {% elif (time >= 12) %}
+    Good Afternoon, {{user}}!
+  {% elif (time >= 5) %}
+    Good Morning, {{user}}!
+  {% else %}
+    Hello, {{user}}!
+  {% endif %}
+    
+secondary: ""
+icon: ""
