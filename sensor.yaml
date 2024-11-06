@@ -1,20 +1,20 @@
 ### Mealie ###
 - platform: rest
-  resource: "http://192.168.10.99:9925/api/groups/mealplans/today"
+  resource: "http://<MEALIE IP:PORT>/api/groups/mealplans/today"
   method: GET
   name: Mealie todays meal
   headers:
-    Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJsb25nX3Rva2VuIjp0cnVlLCJpZCI6IjUxMDdkNDQzLTAxNjktNDgyNy1hYTUyLWE0ZTg5Y2JhZGM5ZSIsIm5hbWUiOiJIQVNTX3NlbnNvciIsImludGVncmF0aW9uX2lkIjoiZ2VuZXJpYyIsImV4cCI6MTg4ODUxNzEzNH0.WHBPxtu_BCmstY5lEtzXxXyN8Mc0hNYNSxexrgKo-Ss
+    Authorization: Bearer <Mealie API key>
   value_template: "{{ value_json[0].recipe.name }}"
   force_update: true
   scan_interval: 30
 
 - platform: rest
-  resource: "http://192.168.10.99:9925/api/groups/mealplans/today"
+  resource: "http://<MEALIE IP:PORT>/api/groups/mealplans/today"
   method: GET
   name: Mealie todays meal ID
   headers:
-    Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJsb25nX3Rva2VuIjp0cnVlLCJpZCI6IjUxMDdkNDQzLTAxNjktNDgyNy1hYTUyLWE0ZTg5Y2JhZGM5ZSIsIm5hbWUiOiJIQVNTX3NlbnNvciIsImludGVncmF0aW9uX2lkIjoiZ2VuZXJpYyIsImV4cCI6MTg4ODUxNzEzNH0.WHBPxtu_BCmstY5lEtzXxXyN8Mc0hNYNSxexrgKo-Ss
+    Authorization: Bearer <Mealie API key>
   value_template: "{{ value_json[0].recipe.id }}"
   force_update: true
   scan_interval: 30
