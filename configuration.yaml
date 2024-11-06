@@ -1,23 +1,24 @@
-# Loads default set of integrations. Do not remove.
+### Loads default set of integrations. Do not remove. ###
 default_config:
 
 frontend:
   themes: !include_dir_merge_named themes
 
-# Text to speech
+### Text to speech ###
 tts:
   - platform: google_translate
+    language: "en"
 
+### Yaml file locations ###
+sensor: !include sensor.yaml
+binary_sensor: !include binary_sensor.yaml
+device_tracker: !include device_tracker.yaml
 automation: !include automations.yaml
 script: !include scripts.yaml
 scene: !include scenes.yaml
 
-# Look in other files for more things!
-sensor: !include sensor.yaml
-binary_sensor: !include binary_sensor.yaml
-device_tracker: !include device_tracker.yaml
-
 homeassistant:
+  customize: !include customize.yaml
   name: Luv Shack
   latitude: 39.755950
   longitude: -104.948360
@@ -27,8 +28,8 @@ homeassistant:
   time_zone: "America/Denver"
   country: US
   
-  external_url: "https://wp45m607mlz1oc2ubi9rewfoup8afprx.ui.nabu.casa/"
-  internal_url: "http://192.168.10.100:8123"
+  external_url: "https://<NABU CASA ADDY>"
+  internal_url: "http://<HA IP:PORT>"
   #  allowlist_external_dirs:
   #  allowlist_external_urls:
   #    - "http://the-jeffrey.duckdns.org"
@@ -36,7 +37,9 @@ homeassistant:
     media: "/media"
   legacy_templates: false
 
-    # add counters
+bluetooth:
+
+### Add counters ###
 counter:
   water_filter_counter:
     name: "Water Filter Counter"
@@ -70,9 +73,10 @@ template:
       state: >
         {{ states.light | selectattr('state', 'eq', 'on') | list | length }}
 
+# Inputs
 input_number:
   water_filter_custom_value:
-    name: Set Water Filter Days
+    name: Adjust Water Filter Days
     initial: 0
     min: 0
     max: 255
@@ -98,11 +102,6 @@ input_number:
     min: 0
     max: 365
     step: 1
-
-input_text:
-  water_filter_custom_number:
-    name: Water Filter Custom Number
-    pattern: '[0-9]*'
 
 browser_mod:
 
