@@ -20,8 +20,8 @@ scene: !include scenes.yaml
 homeassistant:
   customize: !include customize.yaml
   name: Luv Shack
-  latitude: 39.755950
-  longitude: -104.948360
+  latitude:
+  longitude:
   elevation: 5330
   unit_system: imperial
   currency: USD
@@ -118,7 +118,7 @@ logger:
 #     - 192.168.0.0/24
 #     - fd00::/8
 #http:
-#  base_url: "https://the-jeffrey.duckdns.org"
+#  base_url: "https://"
 #  server_port: 8123
 #  ssl_certificate: "/ssl/fullchain.pem"
 #  ssl_key: "/ssl/privkey.pem"
@@ -127,8 +127,8 @@ logger:
 #  customize: !include customize.yaml
 #  whitelist_external_dirs:
 #   -/temp
-#  external_url: https://wp45m607mlz1oc2ubi9rewfoup8afprx.ui.nabu.casa/
-#  internal_url: http://192.168.10.100:8123
+#  external_url: https://
+#  internal_url: http://
 
 #http:
 #  ssl_certificate: "/ssl/fullchain.pem"
