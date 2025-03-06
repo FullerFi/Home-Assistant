@@ -1,47 +1,74 @@
-# Increment all counters at midnight
-- id: increment_filter_counters
-  alias: Increment Filter Counters
-  trigger:
-    - trigger: time
-      at: '00:00:00'  # Every day at midnight
+- id: 'toggle_office_lamp_light'
+  alias: Toggle Office Lamp Light
+  description: ''
+  triggers:
+  - trigger: event
+    event_type: smartthings.button
+    event_data:
+      device_id: d11abf41-3b05-4389-865d-90272f94d0fe
+      value: pushed
+  condition: []
   action:
-    - action: counter.increment
-      target:
-        entity_id: counter.water_filter_counter
-    - action: counter.increment
-      target:
-        entity_id: counter.furnace_filter_counter
-    - action: counter.increment
-      target:
-        entity_id: counter.litter_box_litter_counter
-    - action: counter.increment
-      target:
-        entity_id: counter.litter_box_pee_pad_counter
+  - type: toggle
+    device_id: 3d28c5055698c2dd847cc825f36218f4
+    entity_id: 15ae762e8d5c402c6a1251d3cb762e27
+    domain: light
+  mode: single
 
-# Update Water Filter Counter when the input number changes
-- id: update_water_filter_counter
-  alias: Update Water Filter Counter from Input
-  trigger:
+- id: 'increment_counters'
+  alias: Increment All Counters
+  description: Increments all the counters by one day at midnight.
+  triggers:
+  - trigger: time
+    at: '00:00:00'
+  condition: []
+  actions:
+  - action: counter.increment
+    target:
+      entity_id: counter.water_filter_counter
+  - action: counter.increment
+    target:
+      entity_id: counter.furnace_filter_counter
+  - action: counter.increment
+    target:
+      entity_id: counter.litter_box_litter_counter
+  - action: counter.increment
+    target:
+      entity_id: counter.litter_box_pee_pad_counter
+  mode: single
+
+- id: 'sync_water_filter_counter'
+  alias: Sync Water Filter Counter
+  description: 'Synchronizes the water filter counter with input text'
+  triggers:
     - trigger: state
-      entity_id: input_number.water_filter_custom_value
-  action:
+      entity_id: input_text.water_filter_custom_number
+  condition: []
+  actions:
     - action: counter.set_value
-      target:
-        entity_id: counter.water_filter_counter
       data:
-        value: "{{ states('input_number.water_filter_custom_value') | int }}"
+        entity_id: counter.water_filter_counter
+        value: "{{ states('input_text.water_filter_custom_number') | int }}"
+  mode: single
 
-# - id: reset_water_filter_days
-#   alias: Reset Water Filter Days
-#   trigger:
-#     - trigger: state
-#       entity_id: input_boolean.water_filter_days
-#       to: "on"
-#   action:
-#     - action: input_number.set_value
-#       data:
-#         entity_id: input_number.water_filter_days
-#         value: 0
-#     - action: input_boolean.turn_off
-#       data:
-#         entity_id: input_boolean.water_filter_days
+
+- id: 'update_water_filter_days_since_reset'
+  alias: Update Water Filter Days Since Reset
+  description: 'Calculates days since filter was reset and updates counter'
+  triggers:
+  - trigger: time
+    at: '00:01:00'  # Right after midnight
+  condition: []
+  action:
+  - action: counter.set_value
+    target:
+      entity_id: counter.water_filter_counter
+    data:
+      value: >
+        {% set last_reset = states('input_datetime.water_filter_last_reset') %}
+        {% if last_reset not in ['unknown', 'unavailable', ''] %}
+          {{ ((now().timestamp() - as_timestamp(last_reset)) // 86400) | int }}
+        {% else %}
+          0
+        {% endif %}
+  mode: single
