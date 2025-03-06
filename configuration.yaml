@@ -18,6 +18,8 @@ script: !include scripts.yaml
 scene: !include scenes.yaml
 counter: !include counters.yaml
 input_number: !include input_numbers.yaml
+input_text: !include input_text.yaml
+input_datetime: !include input_datetime.yaml
 
 homeassistant:
   customize: !include customize.yaml
@@ -59,17 +61,6 @@ browser_mod:
   prefix: browser_mod_
   devices:
     # Add device IDs if you want specific device configurations
-
-input_datetime:
-  water_filter_last_reset:
-    name: Water Filter Last Reset
-    has_date: true
-    has_time: true
-
-input_text:
-  water_filter_custom_number:
-    name: Water Filter Custom Number
-    pattern: '[0-9]*'  # Only allow numbers
 
 logger:
   default: info
