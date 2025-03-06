@@ -47,7 +47,7 @@ cards:
           type: entities
           entities: "{{ states('sensor.lights_on_entity_list').split(',') }}"
   - type: custom:mushroom-template-card
-    primary: "{{ states(\"counter.water_filter_counter\") }} days"
+    primary: "{{ states('counter.water_filter_counter') }} days"
     secondary: since WATER FILTER was changed
     icon: mdi:water
     icon_color: blue
@@ -69,50 +69,33 @@ cards:
         service: browser_mod.popup
         data:
           title: Adjust Water Filter Days
-          content: |
-            <div>
-              <h3>Enter Custom Days:</h3>
-              <input type="number" id="custom_days" value="0" min="0" max="255">
-              <button id="set_days">Set Days</button>
-              <button id="reset_counter">Reset Counter</button>
-            </div>
-            <script>
-              document.getElementById('set_days').onclick = function() {
-                const days = document.getElementById('custom_days').value;
-                if (days !== '') {
-                  const daysValue = parseInt(days);
-                  if (!isNaN(daysValue)) {
-                    // Fire an event to set the input_number
-                    window.dispatchEvent(new Event('hass-api-call', {
-                      detail: {
-                        method: 'POST',
-                        url: '/api/services/input_number/set_value',
-                        data: {
-                          entity_id: 'input_number.water_filter_custom_value',
-                          value: daysValue
-                        }
-                      }
-                    }));
-                  }
-                }
-              };
-
-              document.getElementById('reset_counter').onclick = function() {
-                // Fire an event to reset the counter
-                window.dispatchEvent(new Event('hass-api-call', {
-                  detail: {
-                    method: 'POST',
-                    url: '/api/services/counter/reset',
-                    data: {
-                      entity_id: 'counter.water_filter_counter'
-                    }
-                  }
-                }));
-              };
-            </script>
+          content:
+            type: entities
+            entities:
+              - entity: input_text.water_filter_custom_number
+                name: Enter Custom Days
+              - type: button
+                name: Set Days
+                icon: mdi:calendar-check
+                tap_action:
+                  action: call-service
+                  service: counter.set_value
+                  data:
+                    entity_id: counter.water_filter_counter
+                    value: >-
+                      {{ states('input_text.water_filter_custom_number') |
+                      int(0) }}
+              - type: button
+                name: Reset Counter
+                icon: mdi:restart
+                tap_action:
+                  action: call-service
+                  service: counter.reset
+                  data:
+                    entity_id: counter.water_filter_counter
   - type: custom:mushroom-template-card
     primary: "{{ states('counter.furnace_filter_counter') }} days"
-    secondary: since furnace filter was changed
+    secondary: since FURNACE FILTER was changed
     icon: mdi:hvac
     icon_color: white
     badge_icon: |-
