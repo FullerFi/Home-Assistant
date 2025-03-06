@@ -1,0 +1,16 @@
+water_filter_custom_number:
+    name: Water Filter Custom Number
+    pattern: '[0-9]*'  # Only allow numbers
+
+furnace_filter_custom_number:
+  name: Furnace Filter Custom Number
+  pattern: '[0-9]*'
+
+litter_days_custom_number:
+  name: Litter Days Custom Number
+  pattern: '[0-9]*'
+
+pee_pad_days_custom_number:
+  name: Pee Pad Days Custom Number
+  pattern: '[0-9]*'
+  
