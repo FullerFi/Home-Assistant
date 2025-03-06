@@ -16,6 +16,8 @@ device_tracker: !include device_tracker.yaml
 automation: !include automations.yaml
 script: !include scripts.yaml
 scene: !include scenes.yaml
+counter: !include counters.yaml
+input_number: !include input_numbers.yaml
 
 homeassistant:
   customize: !include customize.yaml
@@ -39,104 +41,37 @@ homeassistant:
 
 bluetooth:
 
-### Add counters ###
-counter:
-  water_filter_counter:
-    name: "Water Filter Counter"
-    initial: 0
-    step: 1
-
-  furnace_filter_counter:
-    name: "Furnace Filter Counter"
-    initial: 0
-    step: 1
-
-  litter_box_litter_counter:
-    name: "Litter Box Litter Counter"
-    initial: 0
-    step: 1
-
-  litter_box_pee_pad_counter:
-    name: "Litter Box Pee Pad Counter"
-    initial: 0
-    step: 1
-
 template:
   - sensor:
     - name: "Lights On Entity List"
       unique_id: lights_on_entity_list
       state: >
+        # Returns a comma-separated list of currently on light entities
         {{ states.light | selectattr('state', 'eq', 'on') | map(attribute='entity_id') | join(',') }}
   - sensor:
     - name: "Lights On Counter"
       unique_id: lights_on_counter
       state: >
+        # Counts the number of lights currently turned on
         {{ states.light | selectattr('state', 'eq', 'on') | list | length }}
 
-# Inputs
-input_number:
-  water_filter_custom_value:
-    name: Adjust Water Filter Days
-    initial: 0
-    min: 0
-    max: 255
-    step: 1
-
-  furnace_filter_days:
-    name: Furnace Filter Days
-    initial: 0
-    min: 0
-    max: 365
-    step: 1
-
-  litter_box_litter_days:
-    name: Litter Box Litter Days
-    initial: 0
-    min: 0
-    max: 365
-    step: 1
-
-  litter_box_pee_pad_days:
-    name: Pee Pad Days
-    initial: 0
-    min: 0
-    max: 365
-    step: 1
-
 browser_mod:
+  prefix: browser_mod_
+  devices:
+    # Add device IDs if you want specific device configurations
+
+input_datetime:
+  water_filter_last_reset:
+    name: Water Filter Last Reset
+    has_date: true
+    has_time: true
+
+input_text:
+  water_filter_custom_number:
+    name: Water Filter Custom Number
+    pattern: '[0-9]*'  # Only allow numbers
 
 logger:
   default: info
   logs:
     homeassistant.components.template: debug
-    
-  #auth_providers:
-#   - type: legacy_api_password
-#     api_password: !secret http_password
-#   - type: trusted_networks
-#     trusted_networks:
-#     - 192.168.0.0/24
-#     - fd00::/8
-#http:
-#  base_url: "https://"
-#  server_port: 8123
-#  ssl_certificate: "/ssl/fullchain.pem"
-#  ssl_key: "/ssl/privkey.pem"
-
-# Customization file
-#  customize: !include customize.yaml
-#  whitelist_external_dirs:
-#   -/temp
-#  external_url: https://
-#  internal_url: http://
-
-#http:
-#  ssl_certificate: "/ssl/fullchain.pem"
-#  ssl_key: "/ssl/privkey.pem"
-#  ip_ban_enabled: true
-#  log_attempts_threshold: 5
-
-#  platform: ping
-#  name: internet_reachable
-#  host: 1.1.1.1
-#  scan_interval: 15
