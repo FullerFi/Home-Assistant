@@ -15,60 +15,127 @@
     domain: light
   mode: single
 
-- id: 'increment_counters'
-  alias: Increment All Counters
-  description: Increments all the counters by one day at midnight.
-  triggers:
-  - trigger: time
-    at: '00:00:00'
-  condition: []
-  actions:
-  - action: counter.increment
-    target:
-      entity_id: counter.water_filter_counter
-  - action: counter.increment
-    target:
-      entity_id: counter.furnace_filter_counter
-  - action: counter.increment
-    target:
-      entity_id: counter.litter_box_litter_counter
-  - action: counter.increment
-    target:
-      entity_id: counter.litter_box_pee_pad_counter
-  mode: single
-
-- id: 'sync_water_filter_counter'
-  alias: Sync Water Filter Counter
-  description: 'Synchronizes the water filter counter with input text'
+- id: 'sync_filter_counters'
+  alias: Sync Filter Counters
+  description: 'Synchronizes all filter counters with input text values'
   triggers:
     - trigger: state
-      entity_id: input_text.water_filter_custom_number
+      entity_id:
+        - input_text.water_filter_custom_number
+        - input_text.furnace_filter_custom_number
+        - input_text.litter_box_litter_custom_number
+        - input_text.litter_box_pee_pad_custom_number
+  conditions: []
+  actions:
+    - choose:
+        - conditions:
+            - condition: template
+              value_template: "{{ trigger.entity_id == 'input_text.water_filter_custom_number' }}"
+          sequence:
+            - action: counter.set_value
+              target:
+                entity_id: counter.water_filter_counter
+              data:
+                value: "{{ trigger.to_state.state | int(default=0) }}"
+        - conditions:
+            - condition: template
+              value_template: "{{ trigger.entity_id == 'input_text.furnace_filter_custom_number' }}"
+          sequence:
+            - action: counter.set_value
+              target:
+                entity_id: counter.furnace_filter_counter
+              data:
+                value: "{{ trigger.to_state.state | int(default=0) }}"
+        - conditions:
+            - condition: template
+              value_template: "{{ trigger.entity_id == 'input_text.litter_box_litter_custom_number' }}"
+          sequence:
+            - action: counter.set_value
+              target:
+                entity_id: counter.litter_box_litter_counter
+              data:
+                value: "{{ trigger.to_state.state | int(default=0) }}"
+        - conditions:
+            - condition: template
+              value_template: "{{ trigger.entity_id == 'input_text.litter_box_pee_pad_custom_number' }}"
+          sequence:
+            - action: counter.set_value
+              target:
+                entity_id: counter.litter_box_pee_pad_counter
+              data:
+                value: "{{ trigger.to_state.state | int(default=0) }}"
+  mode: single
+
+
+- id: 'update_days_since_reset'
+  alias: Update Days Since Reset
+  description: 'Increments all counters daily unless reset occurred'
+  triggers:
+    - trigger: time
+      at: '00:01:00'  # Runs shortly after midnight
+  condition: []
+  actions:
+    - if:
+        - condition: template
+          value_template: >
+            {% set last_reset = states('input_datetime.water_filter_last_reset') %}
+            {{ last_reset not in ['unknown', 'unavailable', ''] and (now().date() - as_datetime(last_reset).date()).days > 0 }}
+      then:
+        - action: counter.increment
+          target:
+            entity_id: counter.water_filter_counter
+
+    - if:
+        - condition: template
+          value_template: "{{ states('input_datetime.furnace_filter_last_reset') not in ['unknown', 'unavailable', ''] }}"
+      then:
+        - action: counter.increment
+          target:
+            entity_id: counter.furnace_filter_counter
+
+    - if:
+        - condition: template
+          value_template: "{{ states('input_datetime.litter_box_litter_last_reset') not in ['unknown', 'unavailable', ''] }}"
+      then:
+        - action: counter.increment
+          target:
+            entity_id: counter.litter_box_litter_counter
+
+    - if:
+        - condition: template
+          value_template: "{{ states('input_datetime.litter_box_pee_pad_last_reset') not in ['unknown', 'unavailable', ''] }}"
+      then:
+        - action: counter.increment
+          target:
+            entity_id: counter.litter_box_pee_pad_counter
+  mode: single
+
+- id: 'sync_litter_box_days'
+  alias: Sync Litter Box Days
+  description: 'Synchronizes the litter box counter with input number'
+  triggers:
+    - trigger: state
+      entity_id: input_number.litter_box_litter_days
   condition: []
   actions:
     - action: counter.set_value
+      target:
+        entity_id: counter.litter_box_litter_counter
       data:
-        entity_id: counter.water_filter_counter
-        value: "{{ states('input_text.water_filter_custom_number') | int }}"
+        value: "{{ states('input_number.litter_box_litter_days') | int }}"
   mode: single
 
-
-- id: 'update_water_filter_days_since_reset'
-  alias: Update Water Filter Days Since Reset
-  description: 'Calculates days since filter was reset and updates counter'
+- id: 'sync_pee_pad_days'
+  alias: Sync Pee Pad Days
+  description: 'Synchronizes the pee pad counter with input number'
   triggers:
-  - trigger: time
-    at: '00:01:00'  # Right after midnight
+    - trigger: state
+      entity_id: input_number.litter_box_pee_pad_days
   condition: []
-  action:
-  - action: counter.set_value
-    target:
-      entity_id: counter.water_filter_counter
-    data:
-      value: >
-        {% set last_reset = states('input_datetime.water_filter_last_reset') %}
-        {% if last_reset not in ['unknown', 'unavailable', ''] %}
-          {{ ((now().timestamp() - as_timestamp(last_reset)) // 86400) | int }}
-        {% else %}
-          0
-        {% endif %}
+  actions:
+    - action: counter.set_value
+      target:
+        entity_id: counter.litter_box_pee_pad_counter
+      data:
+        value: "{{ states('input_number.litter_box_pee_pad_days') | int }}"
   mode: single
