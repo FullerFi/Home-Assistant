@@ -1,0 +1,18 @@
+water_filter_counter:
+  name: "Water Filter Counter"
+  initial: 0
+
+furnace_filter_counter:
+  name: "Furnace Filter Counter"
+  initial: 0
+  step: 1
+
+litter_box_litter_counter:
+  name: "Litter Box Litter Counter"
+  initial: 0
+  step: 1
+
+litter_box_pee_pad_counter:
+  name: "Litter Box Pee Pad Counter"
+  initial: 0
+  step: 1
