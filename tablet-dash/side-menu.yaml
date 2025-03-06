@@ -90,7 +90,7 @@ cards:
                 icon: mdi:restart
                 tap_action:
                   action: call-service
-                  service: counter.reset
+                  service: script.reset_water_filter_counter
                   data:
                     entity_id: counter.water_filter_counter
   - type: custom:mushroom-template-card
@@ -111,30 +111,35 @@ cards:
         null
       {% endif %}
     tap_action:
-      action: call-service
-      service: browser_mod.popup
-      service_data:
-        title: Adjust Furnace Filter Days
-        content:
-          type: vertical-stack
-          cards:
-            - type: button
-              name: Increment Days
-              icon: mdi:plus-circle
-              tap_action:
-                action: call-service
-                service: script.turn_on
-                service_data:
-                  entity_id: script.increment_furnace_filter_counter
-            - type: button
-              name: Decrement Days
-              icon: mdi:minus-circle
-              tap_action:
-                action: call-service
-                service_data:
-                  entity_id: script.decrement_furnace_filter_counter
-        deviceID:
-          - this
+      action: fire-dom-event
+      browser_mod:
+        service: browser_mod.popup
+        data:
+          title: Adjust Furnace Filter Days
+          content:
+            type: entities
+            entities:
+              - entity: input_text.furnace_filter_custom_number
+                name: Enter Custom Days
+              - type: button
+                name: Set Days
+                icon: mdi:calendar-check
+                tap_action:
+                  action: call-service
+                  service: counter.set_value
+                  data:
+                    entity_id: counter.furnace_filter_counter
+                    value: >-
+                      {{ states('input_text.furnace_filter_custom_number') |
+                      int(0) }}
+              - type: button
+                name: Reset Counter
+                icon: mdi:restart
+                tap_action:
+                  action: call-service
+                  service: script.reset_furnace_filter_counter
+                  data:
+                    entity_id: counter.furnace_filter_counter
   - type: custom:mushroom-template-card
     primary: "{{ states('counter.litter_box_litter_counter') }} days"
     secondary: since LITTER was changed
@@ -153,32 +158,35 @@ cards:
         null
       {% endif %}
     tap_action:
-      action: perform-action
-      perform_action: browser_mod.popup
-      data:
-        title: Adjust Litter Days
-        content:
-          type: vertical-stack
-          cards:
-            - type: button
-              name: Increment Days
-              icon: mdi:plus-circle
-              tap_action:
-                action: call-service
-                service: script.turn_on
-                service_data:
-                  entity_id: script.increment_litter_box_litter_counter
-            - type: button
-              name: Decrement Days
-              icon: mdi:minus-circle
-              tap_action:
-                action: call-service
-                service: script.turn_on
-                service_data:
-                  entity_id: script.decrement_litter_box_litter_counter
-        deviceID:
-          - this
-      target: {}
+      action: fire-dom-event
+      browser_mod:
+        service: browser_mod.popup
+        data:
+          title: Adjust Litter Days
+          content:
+            type: entities
+            entities:
+              - entity: input_text.litter_days_custom_number
+                name: Enter Custom Days
+              - type: button
+                name: Set Days
+                icon: mdi:calendar-check
+                tap_action:
+                  action: call-service
+                  service: script.set_litter_box_litter_days
+                  data:
+                    entity_id: counter.litter_box_litter_counter
+                    value: >-
+                      {{ states('input_text.litter_days_custom_number') | int(0)
+                      }}
+              - type: button
+                name: Reset Counter
+                icon: mdi:restart
+                tap_action:
+                  action: call-service
+                  service: script.reset_litter_box_litter_counter
+                  data:
+                    entity_id: counter.litter_box_litter_counter
   - type: custom:mushroom-template-card
     primary: "{{ states('counter.litter_box_pee_pad_counter') }} days"
     secondary: since PEE PAD was changed
@@ -197,30 +205,35 @@ cards:
         null
       {% endif %}
     tap_action:
-      action: call-service
-      service: browser_mod.popup
-      service_data:
-        title: Adjust Pee Pad Days
-        content:
-          type: vertical-stack
-          cards:
-            - type: button
-              name: Increment Days
-              icon: mdi:plus-circle
-              tap_action:
-                action: call-service
-                service: script.turn_on
-                service_data:
-                  entity_id: script.increment_litter_box_pee_pad_counter
-            - type: button
-              name: Decrement Days
-              icon: mdi:minus-circle
-              tap_action:
-                action: call-service
-                service_data:
-                  entity_id: script.decrement_litter_box_pee_pad_counter
-        deviceID:
-          - this
+      action: fire-dom-event
+      browser_mod:
+        service: browser_mod.popup
+        data:
+          title: Adjust Pee Pad Days
+          content:
+            type: entities
+            entities:
+              - entity: input_text.pee_pad_days_custom_number
+                name: Enter Custom Days
+              - type: button
+                name: Set Days
+                icon: mdi:calendar-check
+                tap_action:
+                  action: call-service
+                  service: script.set_litter_box_pee_pad_days
+                  data:
+                    entity_id: counter.litter_box_pee_pad_counter
+                    value: >-
+                      {{ states('input_text.pee_pad_days_custom_number') |
+                      int(0) }}
+              - type: button
+                name: Reset Counter
+                icon: mdi:restart
+                tap_action:
+                  action: call-service
+                  service: script.reset_litter_box_pee_pad_counter
+                  data:
+                    entity_id: counter.litter_box_pee_pad_counter
   - type: custom:mushroom-title-card
     title: " "
   - type: markdown
@@ -233,7 +246,4 @@ cards:
 view_layout:
   grid-area: sidebar
 card_mod:
-  style: |
-    ha-card {
-      border-radius: pt
-    }
+  style: null
