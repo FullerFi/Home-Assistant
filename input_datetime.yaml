@@ -1,0 +1,19 @@
+water_filter_last_reset:
+    name: Water Filter Last Reset
+    has_time: true
+    has_date: true
+
+furnace_filter_last_reset:
+  name: Furnace Filter Last Reset
+  has_time: true
+  has_date: true
+
+litter_box_litter_last_reset:
+  name: Litter Box Litter Last Reset
+  has_time: true
+  has_date: true
+
+litter_box_pee_pad_last_reset:
+  name: Litter Box Pee Pad Last Reset
+  has_time: true
+  has_date: true
