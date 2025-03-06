@@ -1,4 +1,4 @@
-# Litter Box
+# Litter Box Scipts
 increment_litter_box_litter_counter:
   alias: Increment Litter Box Litter Counter
   sequence:
@@ -41,6 +41,33 @@ reset_litter_box_pee_pad_counter:
       target:
         entity_id: counter.litter_box_pee_pad_counter
 
+# Water Filter Scripts
+increment_water_filter_counter:
+  alias: Increment Water Filter Counter
+  sequence:
+    - action: counter.increment
+      target:
+        entity_id: counter.water_filter_counter
+
+decrement_water_filter_counter:
+  alias: Decrement Water Filter Counter
+  sequence:
+    - action: counter.decrement
+      target:
+        entity_id: counter.water_filter_counter
+
+reset_water_filter_counter:
+  alias: Reset Water Filter Counter
+  sequence:
+    - action: counter.reset
+      target:
+        entity_id: counter.water_filter_counter
+    - action: input_datetime.set_datetime
+      target:
+        entity_id: input_datetime.water_filter_last_reset
+      data:
+        datetime: "{{ now() }}"
+
 set_water_filter_days:
   alias: Set Water Filter Days
   sequence:
@@ -48,15 +75,35 @@ set_water_filter_days:
       target:
         entity_id: counter.water_filter_counter
       data:
-        value: "{{ states('input_text.new_filter_days') }}"
-        
-reset_water_filter_counter:
-  alias: Reset Water Filter Counter
+        value: "{{ states('input_number.water_filter_custom_value') | int }}"
+
+# Furnace Filter Scripts
+increment_furnace_filter_counter:
+  alias: Increment Furnace Filter Counter
   sequence:
-    - action: input_number.set_value
-      data:
-        entity_id: input_number.water_filter_custom_value
-        value: 0
+    - action: counter.increment
+      target:
+        entity_id: counter.furnace_filter_counter
+
+decrement_furnace_filter_counter:
+  alias: Decrement Furnace Filter Counter
+  sequence:
+    - action: counter.decrement
+      target:
+        entity_id: counter.furnace_filter_counter
+
+reset_furnace_filter_counter:
+  alias: Reset Furnace Filter Counter
+  sequence:
     - action: counter.reset
+      target:
+        entity_id: counter.furnace_filter_counter
+
+set_furnace_filter_days:
+  alias: Set Furnace Filter Days
+  sequence:
+    - action: counter.configure
+      target:
+        entity_id: counter.furnace_filter_counter
       data:
-        entity_id: counter.water_filter_counter
+        value: "{{ states('input_number.furnace_filter_days') | int }}"
