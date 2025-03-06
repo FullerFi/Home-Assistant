@@ -1,0 +1,31 @@
+water_filter_custom_value:
+  name: Adjust Water Filter Days
+  initial: 0
+  min: 0
+  max: 255
+  step: 1
+  mode: box
+
+furnace_filter_days:
+  name: Furnace Filter Days
+  initial: 0
+  min: 0
+  max: 365
+  step: 1
+  mode: box
+
+litter_box_litter_days:
+  name: Litter Box Litter Days
+  initial: 0
+  min: 0
+  max: 365
+  step: 1
+  mode: box
+
+litter_box_pee_pad_days:
+  name: Pee Pad Days
+  initial: 0
+  min: 0
+  max: 365
+  step: 1
+  mode: box
