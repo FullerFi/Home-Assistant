@@ -20,6 +20,15 @@ reset_litter_box_litter_counter:
       target:
         entity_id: counter.litter_box_litter_counter
 
+set_litter_box_litter_days:
+  alias: Set Litter Box Litter Days
+  sequence:
+    - action: counter.set_value
+      target:
+        entity_id: counter.litter_box_litter_counter
+      data:
+        value: "{{ states('input_text.litter_days_custom_number') | int }}"
+
 increment_litter_box_pee_pad_counter:
   alias: Increment Litter Box Pee Pad Counter
   sequence:
@@ -40,6 +49,15 @@ reset_litter_box_pee_pad_counter:
     - action: counter.reset
       target:
         entity_id: counter.litter_box_pee_pad_counter
+
+set_litter_box_pee_pad_days:
+  alias: Set Pee Pad Days
+  sequence:
+    - action: counter.set_value
+      target:
+        entity_id: counter.litter_box_pee_pad_counter
+      data:
+        value: "{{ states('input_text.pee_pad_days_custom_number') | int }}"
 
 # Water Filter Scripts
 increment_water_filter_counter:
@@ -68,15 +86,6 @@ reset_water_filter_counter:
       data:
         datetime: "{{ now() }}"
 
-set_water_filter_days:
-  alias: Set Water Filter Days
-  sequence:
-    - action: counter.set_value
-      target:
-        entity_id: counter.water_filter_counter
-      data:
-        value: "{{ states('input_number.water_filter_custom_value') | int }}"
-
 # Furnace Filter Scripts
 increment_furnace_filter_counter:
   alias: Increment Furnace Filter Counter
@@ -99,11 +108,20 @@ reset_furnace_filter_counter:
       target:
         entity_id: counter.furnace_filter_counter
 
-set_furnace_filter_days:
-  alias: Set Furnace Filter Days
+set_filter_days:
+  alias: Set Filter Days
   sequence:
-    - action: counter.configure
+    - action: counter.set_value
       target:
-        entity_id: counter.furnace_filter_counter
+        entity_id: >
+          {% if trigger.entity_id == 'input_text.water_filter_custom_number' %}
+            counter.water_filter_counter
+          {% elif trigger.entity_id == 'input_text.furnace_filter_custom_number' %}
+            counter.furnace_filter_counter
+          {% elif trigger.entity_id == 'input_text.litter_days_custom_number' %}
+            counter.litter_box_litter_counter
+          {% elif trigger.entity_id == 'input_text.pee_pad_days_custom_number' %}
+            counter.litter_box_pee_pad_counter
+          {% endif %}
       data:
-        value: "{{ states('input_number.furnace_filter_days') | int }}"
+        value: "{{ trigger.to_state.state | int(0) }}"
