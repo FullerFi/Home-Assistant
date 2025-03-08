@@ -45,17 +45,15 @@ bluetooth:
 
 template:
   - sensor:
-    - name: "Lights On Entity List"
-      unique_id: lights_on_entity_list
-      state: >
-        # Returns a comma-separated list of currently on light entities
-        {{ states.light | selectattr('state', 'eq', 'on') | map(attribute='entity_id') | join(',') }}
-  - sensor:
-    - name: "Lights On Counter"
-      unique_id: lights_on_counter
-      state: >
-        # Counts the number of lights currently turned on
-        {{ states.light | selectattr('state', 'eq', 'on') | list | length }}
+      - name: "Lights On Counter"
+        unique_id: lights_on_counter
+        state: >-
+          {{ states.light | selectattr('state', 'eq', 'on') | list | count | int(0) }}
+      - name: "Lights On Entity List"
+        unique_id: lights_on_entity_list
+        state: >-
+          {% set lights_on = states.light | selectattr('state', 'eq', 'on') | map(attribute='entity_id') | list %}
+          {{ lights_on | join(',') }}
 
 browser_mod:
   prefix: browser_mod_
