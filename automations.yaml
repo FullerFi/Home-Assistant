@@ -139,3 +139,70 @@
       data:
         value: "{{ states('input_number.litter_box_pee_pad_days') | int }}"
   mode: single
+
+- id: 'reset_counters_via_nfc'
+  alias: Reset Counters via NFC
+  description: Prompts for confirmation and resets the respective counter when an NFC tag is scanned.
+  triggers:
+    - trigger: event
+      event_type: tag_scanned
+  conditions: []
+  actions:
+    - choose:
+        - conditions:
+            - condition: template
+              value_template: "{{ trigger.event.data.tag_id == '72386f3a-3089-4ca9-a90c-a7c3f26d7847' }}"
+          sequence:
+            - action: notify.mobile_app_your_iphone
+              data:
+                message: "Did you replace the litter in Blue's litter box?"
+                title: "Reset Litter Counter?"
+                data:
+                  push:
+                    category: "reset_litter"
+                  actions:
+                    - action: "RESET_LITTER"
+                      title: "Yes"
+                      destructive: false
+                    - action: "IGNORE"
+                      title: "No"
+                      destructive: false
+            - wait_for_trigger:
+                - trigger: event
+                  event_type: mobile_app_notification_action
+                  event_data:
+                    action: "RESET_LITTER"
+              timeout: "00:30:00"
+              continue_on_timeout: false
+            - action: counter.reset
+              target:
+                entity_id: counter.litter_box_litter_counter
+            - action: notify.mobile_app_iHefe
+              data:
+                title: "Litter Counter Reset"
+                message: "The litter counter has been reset successfully! Blue says thanks!"
+
+        - conditions:
+            - condition: template
+              value_template: "{{ trigger.event.data.tag_id == '8b2662cc-3e35-47c8-a5df-3f9f63b31b9b' }}"
+          sequence:
+            - action: counter.reset
+              target:
+                entity_id: counter.litter_box_pee_pad_counter
+
+        - conditions:
+            - condition: template
+              value_template: "{{ trigger.event.data.tag_id == '9d3bd791-8e1c-43f3-939a-716695092f24' }}"
+          sequence:
+            - action: counter.reset
+              target:
+                entity_id: counter.water_filter_counter
+
+        - conditions:
+            - condition: template
+              value_template: "{{ trigger.event.data.tag_id == 'fb0949aa-ed18-46f0-bea2-e5c47116528a' }}"
+          sequence:
+            - action: counter.reset
+              target:
+                entity_id: counter.furnace_filter_counter
+  mode: single
