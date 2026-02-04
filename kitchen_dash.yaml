@@ -1,0 +1,119 @@
+views:
+  - title: Kitchen
+    path: kitchen
+    theme: default
+    type: custom:grid-layout
+    layout:
+      grid-template-columns: 1fr
+      grid-template-rows: auto
+      grid-gap: 12px
+    cards:
+
+      # ── HERO HEADER: Date, Time, Weather ─────────────────────────
+      - type: vertical-stack
+        cards:
+          - type: custom:mushroom-title-card
+            title: Good Morning
+            subtitle: "{{ now().strftime('%A, %B %-d') }}"
+            card_mod:
+              style: |
+                ha-card { margin-bottom: -4px; }
+
+          - type: horizontal-stack
+            cards:
+              # Weather (current + hi/lo)
+              - type: custom:mushroom-template-card
+                primary: >-
+                  {{ states('weather.forecast_home') | title }}
+                secondary: >-
+                  {% set f = state_attr('weather.forecast_home','forecast') %}
+                  {% if f and f[0] is defined %}
+                    High {{ f[0].temperature }}° • Low {{ f[0].templow if f[0].templow is defined else f[0].temperature }}°
+                  {% else %}
+                    Forecast unavailable
+                  {% endif %}
+                icon: >-
+                  {% set icon = state_attr('weather.forecast_home','icon') %}
+                  {{ 'mdi:weather-' + (icon if icon else 'cloudy') }}
+                icon_color: blue
+                multiline_secondary: true
+                tap_action:
+                  action: more-info
+                  entity: weather.forecast_home
+                card_mod:
+                  style: |
+                    ha-card {
+                      border-radius: 16px;
+                      box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+                      padding: 12px;
+                    }
+
+              # Large clock
+              - type: custom:mushroom-template-card
+                primary: "{{ states('sensor.time') }}"
+                secondary: "Local time"
+                icon: mdi:clock-outline
+                icon_color: purple
+                layout: vertical
+                card_mod:
+                  style: |
+                    ha-card {
+                      border-radius: 16px;
+                      box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+                      padding: 12px;
+                      font-size: 36px;
+                    }
+
+      # ── KIDS CHECKLIST ───────────────────────────────────────────
+      - type: custom:mushroom-title-card
+        title: Kids Morning Checklist
+        subtitle: Out-The-Door
+
+      - type: todo-list
+        entity: todo.kids_morning_checklist
+        show_completed: false
+        sort: due
+        card_mod:
+          style: |
+            ha-card {
+              border-radius: 16px;
+              box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+            }
+
+      # ── MEAL PLAN (list view) ───────────────────────────────────
+      - type: custom:mushroom-title-card
+        title: Upcoming Meals
+        subtitle: Today + next 3 days
+
+      - type: calendar
+        entities:
+          - calendar.anylist_meal_plan
+        initial_view: list
+        max_days_to_show: 4
+        card_mod:
+          style: |
+            ha-card {
+              border-radius: 16px;
+              box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+            }
+
+      # ── OPTIONAL: KITCHEN TIMER ─────────────────────────────────
+      - type: conditional
+        conditions:
+          - entity: timer.
+            state_not: "unavailable"
+        card:
+          type: custom:mushroom-entity-card
+          entity: timer.KITCHEN_TIMER
+          name: Kitchen Timer
+          icon: mdi:timer-sand
+          icon_color: red
+          layout: horizontal
+          tap_action:
+            action: more-info
+          card_mod:
+            style: |
+              ha-card {
+                border-radius: 16px;
+                box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+              }
